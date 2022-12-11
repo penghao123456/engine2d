@@ -2,6 +2,13 @@ from all_ import *
 
 class Scene(object):
     def __init__(self, name:str, type_, fps:int=60) -> type(None):
+        """Create a scene.
+
+        Must make sure there is a scene when you creating a sprite.
+        Args:
+        name: The name of the scene.
+
+        """
         self.name=name
         self.type_=type_
         self.fps=fps
@@ -9,7 +16,7 @@ class Scene(object):
     pass
 
 class Sprite(object):
-    def __init__(self, name:str, shapes:List[pygame.Surface],
+    def __init__(self, name:str, shapes:List[pygame.Surface], scene:Scene,
             isplayer:bool=False, heart:int=-1, maxheart:int=-1) -> type(None):
         """Setup a sprite.
 
