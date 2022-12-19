@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import *
 
-import typing
+from typing import *
 
 import enums

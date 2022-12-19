@@ -1,23 +1,61 @@
 from all_ import *
 
+Number=TypeVar("Number", int, float)
+
+class Sprite(object):
+    pass
+
 class Scene(object):
-    def __init__(self, name:str, type_, fps:int=60) -> type(None):
+    def __init__(self, name:str, bg:pygame.Surface,
+            type_:enums.SceneType) -> type(None):
         """Create a scene.
 
         Must make sure there is a scene when you creating a sprite.
         Args:
         name: The name of the scene.
+        bg: The background of the scene.
+        type_: The type of the scene.
+        fps: The FPS of the scene.
 
         """
         self.name=name
+        self.bg=bg
+        self.width=bg.get_width()
+        self.height=bg.get_height()
         self.type_=type_
-        self.fps=fps
+        self.sprites:List[Sprite]=[]
         pass
+    def add_sprite(self, sprite:Sprite):
+        """Add a sprite.
+        
+        Args:
+        sprite: Which sprite will be add.
+
+        Returns:
+        A integer for the new sprite's position.
+        """
+        if not isinstance(sprite, Sprite):
+            raise TypeError("Argument 'sprite' must be a Sprite, "
+                "not %s." % type(sprite).__name__)
+            pass
+        self.sprites.append(sprite)
+        return len(self.sprites)-1
+    def update(self):
+        """Update scene and get its surface.
+        """
+        surface=self.bg.copy()
+        surface.lock()
+        for sprite in self.sprites:
+            surface.blit(sprite.update(), (sprite.x, sprite.y))
+            pass
+        surface.unlock()
+        return surface
+    def removesprite
     pass
 
 class Sprite(object):
     def __init__(self, name:str, shapes:List[pygame.Surface], scene:Scene,
-            isplayer:bool=False, heart:int=-1, maxheart:int=-1) -> type(None):
+            isplayer:bool=False, heart:Number=-1, maxheart:Number=-1) -> type(None):
         """Setup a sprite.
 
         Args:
@@ -55,7 +93,7 @@ class Sprite(object):
             pass
         if not isinstance(maxheart, int):
             raise TypeError("Argument 'maxheart' must be a interger,"
-                "not %s." % type(name).__name__ )
+                    "not %s." % type(name).__name__ )
             pass
 
         if heart<-1:
@@ -65,18 +103,60 @@ class Sprite(object):
         if heart>maxheart or (maxheart != -1 and heart==-1):
             raise ValueError("'heart' was greater than 'maxheart'.")
         self.name=name
+        self.shapes=shapes
         self.isplayer=isplayer
         self.heart=heart
+        self.handles={}
+        self.x=0
+        self.y=0
+        self.shapeno=0
         pass
-    def heartchange(self, modifys:int=0, isattack:bool=True) -> type(None):
+    def heartchange(self, modifys:Number=0, isattack:bool=True) -> type(None):
         """Change the sprite's heart.
 
         Args:
         modifys: What it changes.
         isattack: Is it an attack. (If it is, then it reverse.)
+        
+        Raises:
+        TypeError: Wrong type.
         """
+        if not isinstance(isattack, bool):
+            raise TypeError("Argument 'isattack' must be a boolean, "
+                "not %s" % type(isattack).__name__)
+            pass
+        if not isinstance(modifys, Number):
+            raise TypeError("Argument 'isattack' must be a boolean, "
+                "not %s" % type(isattack).__name__)
+            pass
+        if self.heart==-1:
+            return
         if isattack:
             modifys=-modifys
             pass
         self.heart+=modifys
         pass
+    def bindhandle(self, handlename:str, bindfunction:Callable) -> type(None):
+        """Bind handles to a function.
+
+        If it was binded, then overwrite it.
+        Args:
+        handlename: The name of handles.
+        bindfunctions: The functions when the event start.
+        Raises:
+        TypeError: Wrong parameter type.
+        """
+        if not callable(bindfunction):
+            raise TypeError("Argument bindfunction' must be a callable, "
+                    "not %s." % type(bindfunction).__name__)
+            pass
+        if not isinstance(handlename, str):
+            raise TypeError("Argument 'handlename' must be a string, "
+                    "not %s." % type(handlename).__name__)
+            pass
+
+        self.handles[handlename]=bindfunction
+        pass
+    def update(self):
+        return self.shapes[self.shapeno]
+    pass
