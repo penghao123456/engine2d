@@ -1,7 +1,5 @@
 from all_ import *
 
-Number=TypeVar("Number", int, float)
-
 class Sprite(object):
     pass
 
