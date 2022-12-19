@@ -21,7 +21,8 @@ class Scene(object):
         self.width=bg.get_width()
         self.height=bg.get_height()
         self.type_=type_
-        self.sprites:List[Sprite]=[]
+        self.sprites:List[Union[type(None), Sprite]]=[]
+        self.removed=[]
         pass
     def add_sprite(self, sprite:Sprite):
         """Add a sprite.
@@ -36,19 +37,36 @@ class Scene(object):
             raise TypeError("Argument 'sprite' must be a Sprite, "
                 "not %s." % type(sprite).__name__)
             pass
+        if self.removed:
+            pos=self.removed.pop()
+            self.sprite[pos]=sprite
+            return pos
         self.sprites.append(sprite)
         return len(self.sprites)-1
     def update(self):
         """Update scene and get its surface.
+
+        Returns:
+        The surface (pygame.Surface).
         """
         surface=self.bg.copy()
         surface.lock()
         for sprite in self.sprites:
+            if sprite is None:
+                pass # Ignore removed sprite.
             surface.blit(sprite.update(), (sprite.x, sprite.y))
             pass
         surface.unlock()
         return surface
-    def removesprite
+    def removesprite(self, handle):
+        """Remove a sprite.
+
+        Args:
+        handle: The handle of the sprite will be removed.
+        """
+        self.sprites[handle]=None
+        self.removed.append(handle)
+        pass
     pass
 
 class Sprite(object):
